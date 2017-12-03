@@ -8,12 +8,10 @@ import java.rmi.registry.Registry;
 import se.kth.ict.id1212.minor.hw3.server.controller.Controller;
 import se.kth.ict.id1212.minor.hw3.common.FileCatalog;
 
-/**
- * Starts the bank server.
- */
+
 public class Server {
     private static final String USAGE = "java bankjpa.Server [bank name in rmi registry]";
-    private String bankName = FileCatalog.CATALOG_NAME_IN_REGISTRY;
+    private String catalogName = FileCatalog.CATALOG_NAME_IN_REGISTRY;
 
     public static void main(String[] args) {
         try {
@@ -33,7 +31,7 @@ public class Server {
             LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
         }
         Controller contr = new Controller();
-        Naming.rebind(bankName, contr);
+        Naming.rebind(catalogName, contr);
     }
 
     private void parseCommandLineArgs(String[] args) {
@@ -43,7 +41,7 @@ public class Server {
         }
 
         if (args.length > 0) {
-            bankName = args[0];
+            catalogName = args[0];
         }
     }
 }

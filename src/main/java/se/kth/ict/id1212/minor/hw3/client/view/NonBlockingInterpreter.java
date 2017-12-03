@@ -1,26 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package se.kth.ict.id1212.minor.hw3.client.view;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
-import se.kth.ict.id1212.minor.hw3.client.integration.FileHandler;
 import se.kth.ict.id1212.minor.hw3.common.AccountDTO;
 import se.kth.ict.id1212.minor.hw3.common.FileCatalog;
 import se.kth.ict.id1212.minor.hw3.client.controller.Controller;
 import se.kth.ict.id1212.minor.hw3.common.FileDTO;
 
-/**
- * Reads and interprets user commands. The command interpreter will run in a separate thread, which
- * is started by calling the <code>start</code> method. Commands are executed in a thread pool, a
- * new prompt will be displayed as soon as a command is submitted to the pool, without waiting for
- * command execution to complete.
- */
+
 public class NonBlockingInterpreter implements Runnable {
     private static final String PROMPT = "> ";
     private final Scanner console = new Scanner(System.in);
@@ -33,8 +21,8 @@ public class NonBlockingInterpreter implements Runnable {
     public NonBlockingInterpreter(){
         this.controller = new Controller();
     }
-    public void start(FileCatalog bank) {
-        this.fileCatalog = bank;
+    public void start(FileCatalog catalog) {
+        this.fileCatalog = catalog;
         if (receivingCmds) {
             return;
         }
@@ -42,9 +30,7 @@ public class NonBlockingInterpreter implements Runnable {
         new Thread(this).start();
     }
 
-    /**
-     * Interprets and performs user commands.
-     */
+
     @Override
     public void run() {
         AccountDTO acct = null;

@@ -3,9 +3,7 @@ package se.kth.ict.id1212.minor.hw3.common;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import se.kth.ict.id1212.minor.hw3.server.model.Account;
 import se.kth.ict.id1212.minor.hw3.server.model.AccountException;
-import se.kth.ict.id1212.minor.hw3.server.model.RejectedException;
 
 
 public interface FileCatalog extends Remote {

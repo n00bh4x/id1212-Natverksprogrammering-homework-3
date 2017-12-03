@@ -8,15 +8,11 @@ import se.kth.ict.id1212.minor.hw3.common.AccountDTO;
 import se.kth.ict.id1212.minor.hw3.server.model.AccountException;
 import se.kth.ict.id1212.minor.hw3.server.integration.FileCatalogDAO;
 import se.kth.ict.id1212.minor.hw3.server.model.Account;
-import se.kth.ict.id1212.minor.hw3.server.model.RejectedException;
 import se.kth.ict.id1212.minor.hw3.common.FileCatalog;
 import se.kth.ict.id1212.minor.hw3.common.FileDTO;
 import se.kth.ict.id1212.minor.hw3.server.model.File;
 
-/**
- * Implementations of the bank's remote methods, this is the only server class that can be called
- * remotely
- */
+
 public class Controller extends UnicastRemoteObject implements FileCatalog {
     private final FileCatalogDAO database;
     private final AccountManager accountManager;

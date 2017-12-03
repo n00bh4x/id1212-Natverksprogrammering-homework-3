@@ -16,9 +16,7 @@ public class FileCatalogDAO {
     private final EntityManagerFactory emFactory;
     private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
 
-    /**
-     * Constructs a new DAO object connected to the specified database.
-     */
+
     public FileCatalogDAO() {
         emFactory = Persistence.createEntityManagerFactory("percistanceUnit");
     }
@@ -66,11 +64,7 @@ public class FileCatalogDAO {
         }
     }    
 
-    /**
-     * Retrieves all existing accounts.
-     *
-     * @return A list with all existing accounts. The list is empty if there are no accounts.
-     */
+
     public List<File> findAllAccounts() {
         try {
             EntityManager em = beginTransaction();
@@ -113,12 +107,6 @@ public class FileCatalogDAO {
         }
     }
 
-    /**
-     * Creates a new account.
-     *
-     * @param account The account to create.
-     * @return 
-     */
     public Account createAccount(Account account) {
         try {
             EntityManager em = beginTransaction();

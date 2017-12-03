@@ -13,18 +13,16 @@ import se.kth.ict.id1212.minor.hw3.client.integration.FileHandler;
 import se.kth.ict.id1212.minor.hw3.client.view.NonBlockingInterpreter;
 import se.kth.ict.id1212.minor.hw3.common.FileCatalog;
 
-/**
- * Starts the chat client.
- */
+
 public class Main {
     /**
      * @param args There are no command line arguments.
      */
     public static void main(String[] args) {
         try {
-            FileCatalog bank = (FileCatalog) Naming.lookup(FileCatalog.CATALOG_NAME_IN_REGISTRY);
+            FileCatalog catalog = (FileCatalog) Naming.lookup(FileCatalog.CATALOG_NAME_IN_REGISTRY);
             FileHandler fileHandler = new FileHandler();
-            new NonBlockingInterpreter().start(bank);
+            new NonBlockingInterpreter().start(catalog);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             System.out.println("Could not start bank client.");
         }
