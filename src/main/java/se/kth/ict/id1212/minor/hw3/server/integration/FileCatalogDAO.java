@@ -9,14 +9,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
-import se.kth.ict.id1212.minor.hw3.common.FileDTO;
 import se.kth.ict.id1212.minor.hw3.server.model.File;
 import se.kth.ict.id1212.minor.hw3.server.model.Account;
 
-/**
- * This data access object (DAO) encapsulates all database calls in the bank application. No code
- * outside this class shall have any knowledge about the database.
- */
 public class FileCatalogDAO {
     private final EntityManagerFactory emFactory;
     private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
