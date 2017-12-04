@@ -17,9 +17,11 @@ public class NonBlockingInterpreter implements Runnable {
     private boolean receivingCmds = false;
     private String userId;
     private final Controller controller;
+    private final ServerObserver serverObserver;
 
     public NonBlockingInterpreter(){
         this.controller = new Controller();
+        serverObserver = new ServerObserver();
     }
     public void start(FileCatalog catalog) {
         this.fileCatalog = catalog;
