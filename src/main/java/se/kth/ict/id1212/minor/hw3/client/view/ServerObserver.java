@@ -14,10 +14,13 @@ import se.kth.ict.id1212.minor.hw3.common.ClientOutput;
  * @author mikaelnorberg
  */
 public class ServerObserver extends UnicastRemoteObject implements ClientOutput{
-    private final ThreadSafeStdOut out = new ThreadSafeStdOut();
+    ThreadSafeStdOut out;
+    public ServerObserver() throws RemoteException {
+        out = new ThreadSafeStdOut();
+    }
     
-    @Override
     public void messageToClient(String message) throws RemoteException {
         out.println(message);
     }
+
 }

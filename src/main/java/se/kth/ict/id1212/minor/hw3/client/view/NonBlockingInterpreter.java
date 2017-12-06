@@ -17,11 +17,10 @@ public class NonBlockingInterpreter implements Runnable {
     private boolean receivingCmds = false;
     private String userId;
     private final Controller controller;
-    private final ServerObserver serverObserver;
+    private ServerObserver serverObserver;
 
     public NonBlockingInterpreter(){
-        this.controller = new Controller();
-        serverObserver = new ServerObserver();
+        this.controller = new Controller();      
     }
     public void start(FileCatalog catalog) {
         this.fileCatalog = catalog;
@@ -53,7 +52,8 @@ public class NonBlockingInterpreter implements Runnable {
                         break;
                     case REGISTER:
                         if(userId == null) {
-                            acct = fileCatalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                            //serverObserver = new ServerObserver();
+                            acct = fileCatalog.createAccount(new ServerObserver(), cmdLine.getParameter(0), cmdLine.getParameter(1));
                             userId = acct.getUsername();
                         } else {
                             outMgr.println("You must logout to register.");
@@ -70,7 +70,8 @@ public class NonBlockingInterpreter implements Runnable {
                         break;
                     case LOGIN:
                         if(userId == null) {
-                            acct = fileCatalog.login(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                            //serverObserver = new ServerObserver();
+                            acct = fileCatalog.login(new ServerObserver(), cmdLine.getParameter(0), cmdLine.getParameter(1));
                             userId = acct.getUsername();
                         } else {
                             outMgr.println("You must logout to login.");
@@ -90,7 +91,8 @@ public class NonBlockingInterpreter implements Runnable {
                                     cmdLine.getParameter(0),
                                     cmdLine.getParameter(1),
                                     cmdLine.getParameter(2),
-                                    cmdLine.getParameter(3));
+                                    cmdLine.getParameter(3),
+                                    cmdLine.getParameter(4));
                         } else {
                             outMgr.println("You must be logged in to upload a file.");
                         }
@@ -128,23 +130,25 @@ public class NonBlockingInterpreter implements Runnable {
     }
 
     
-    private void uploadFile(String userId, String filename, String pAccess, String wAccess, String rAccess) throws Exception {
+    private void uploadFile(String userId, String filename, String aOwner, String pAccess, String wAccess, String rAccess) throws Exception {
+        boolean alertOwner;
         boolean publicAccess;
         boolean writeAccess;
         boolean readAccess;
         try{
-            publicAccess = checkAccess(pAccess);
-            writeAccess = checkAccess(wAccess);
-            readAccess = checkAccess(rAccess);
+            alertOwner = getBooleanValue(aOwner);
+            publicAccess = getBooleanValue(pAccess);
+            writeAccess = getBooleanValue(wAccess);
+            readAccess = getBooleanValue(rAccess);
             long filesize = controller.getFileSize(filename);
-            fileCatalog.upload(userId, filename, filesize, publicAccess, writeAccess, readAccess);
+            fileCatalog.upload(alertOwner, userId, filename, filesize, publicAccess, writeAccess, readAccess);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
 
 }
 
-    private boolean checkAccess(String pAccess) throws Exception {
+    private boolean getBooleanValue(String pAccess) throws Exception {
         if(pAccess.equalsIgnoreCase("yes")) {
             return true;
         } else if(pAccess.equalsIgnoreCase("no")) {

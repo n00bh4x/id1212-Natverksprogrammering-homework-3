@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import se.kth.ict.id1212.minor.hw3.common.AccountDTO;
+import se.kth.ict.id1212.minor.hw3.common.ClientOutput;
 import se.kth.ict.id1212.minor.hw3.server.model.AccountException;
 import se.kth.ict.id1212.minor.hw3.server.integration.FileCatalogDAO;
 import se.kth.ict.id1212.minor.hw3.server.model.Account;
@@ -25,7 +26,7 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
 
     
     @Override
-    public AccountDTO login(String username, String password) throws RemoteException, AccountException {
+    public AccountDTO login(ClientOutput toClient, String username, String password) throws RemoteException, AccountException {
         Account account = null;
         try {
             if ((account = accountManager.isUserLoggedIn(username, password)) != null) {
@@ -33,7 +34,7 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
             } else if ((account = database.authenticateUser(username, password)) == null) {
                 throw new AccountException("Wrong username or password");
             } else {
-                accountManager.login(account);
+                accountManager.login(account, toClient);
             }
         } catch (Exception e) {
             throw new AccountException(e.getMessage());
@@ -51,13 +52,13 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
     }
 
     @Override
-    public AccountDTO createAccount(String username, String password) throws AccountException {
+    public AccountDTO createAccount(ClientOutput toClient, String username, String password) throws AccountException {
         try {
             if (database.findAccountByName(username, true) != null) {
                 throw new AccountException("Account already exists.");
             }
             Account account = database.createAccount(new Account(username, password));
-            accountManager.login(account);
+            accountManager.login(account, toClient);
             return account;
         } catch (Exception e) {
             throw new AccountException(e.getMessage());
@@ -68,13 +69,12 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
 
     @Override
     public boolean deleteAccount(String username, String password) throws AccountException {
-        Account account = null;
         try {
-            accountManager.removeLoggedInAccount(username, password);
-            if ((account = database.authenticateUser(username, password)) == null) {
+            if (database.authenticateUser(username, password) == null) {
                 throw new AccountException("Wrong username or password");
             } else {
                 database.deleteAccount(username, password);
+                accountManager.removeLoggedInAccount(username, password);
                 return true;
             }
         } catch (Exception e) {
@@ -83,10 +83,14 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
     }
 
     @Override
-    public void upload(String userId, String filename, long filesize, boolean publicAccess, boolean writeAccess, boolean readAccess) throws RemoteException, AccountException {
+    public void upload(boolean alertOwner, String userId, String filename, long filesize, boolean publicAccess, boolean writeAccess, boolean readAccess) throws RemoteException, AccountException {
         try{
             Account account = accountManager.getAccount(userId);
-            database.uploadFile(new File(account, filename, filesize, publicAccess, writeAccess, readAccess));
+            File file = new File(account, filename, filesize, publicAccess, writeAccess, readAccess);
+            database.uploadFile(file);
+            if(alertOwner) {
+                accountManager.addNotifyOnAccess(filename, file);
+            }
         } catch(Exception e) {
             throw new AccountException("File already exists. file name must be unique.");
         }
@@ -94,8 +98,11 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
 
     @Override
     public void deleteFile(String userId, String filename) throws RemoteException, AccountException {
+        final String ACTION = "Delete";
         try{
             database.deleteFile(userId, filename);
+            accountManager.notifyOwner(userId, ACTION, filename);
+            accountManager.deleteFromNotifyOnAction(filename);
         } catch(Exception e) {
             throw new AccountException(e.getMessage());
         }
@@ -103,9 +110,9 @@ public class Controller extends UnicastRemoteObject implements FileCatalog {
 
     @Override
     public List<? extends FileDTO> listFiles(String userId) throws RemoteException, AccountException {
-        return database.listFiles(userId);
+        final String ACTION = "List";
+        List<File> files = database.listFiles(userId);
+        accountManager.notifyOwners(userId, ACTION, files);
+        return files;
     }
-
-
-
 }

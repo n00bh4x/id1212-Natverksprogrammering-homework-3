@@ -16,6 +16,7 @@ import se.kth.ict.id1212.minor.hw3.common.FileDTO;
         @NamedQuery(
                 name = "deleteFile",
                 query = "DELETE FROM File file WHERE file.filename LIKE :filename AND file.owner.name LIKE :username"
+                        + " OR file.publicAccess = true AND file.writeAccess = true AND file.filename LIKE :filename"
         ),     
         @NamedQuery(
                 name = "deleteAllFiles",
@@ -114,6 +115,10 @@ public class File implements FileDTO {
     @Override
     public String getFileName() {
         return filename;
+    }
+
+    String getOwnerName() {
+        return owner.getUsername();
     }
     
 

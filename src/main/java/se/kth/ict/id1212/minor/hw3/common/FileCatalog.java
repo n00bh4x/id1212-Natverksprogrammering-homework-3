@@ -10,15 +10,15 @@ public interface FileCatalog extends Remote {
 
     public static final String CATALOG_NAME_IN_REGISTRY = "catalog";
     
-    public AccountDTO createAccount(String username, String password) throws RemoteException, AccountException;
+    public AccountDTO createAccount(ClientOutput toClient, String username, String password) throws RemoteException, AccountException;
     
-    public AccountDTO login(String username, String password) throws RemoteException, AccountException;
+    public AccountDTO login(ClientOutput toClient, String username, String password) throws RemoteException, AccountException;
 
     public void logout(String username) throws RemoteException, AccountException;
     
     public boolean deleteAccount(String username, String password) throws RemoteException, AccountException;
 
-    public void upload(String userId, String filename, long filesize, boolean publicAccess, boolean writeAccess, boolean readAccess) throws RemoteException, AccountException;
+    public void upload(boolean alertOwner, String userId, String filename, long filesize, boolean publicAccess, boolean writeAccess, boolean readAccess) throws RemoteException, AccountException;
 
     public void deleteFile(String userId, String filename) throws RemoteException, AccountException;
 
